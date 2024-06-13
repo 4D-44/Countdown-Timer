@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown Timer</title>
+  <style>
+    html {
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #4D4D4D;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    #countdown {
+      text-align: center;
+    }
+
+    #timer {
+      font-size: 4rem;
+      color: #ffffff;
+    }
+
+    #controls {
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="countdown">
+    <h1 id="timer">00:00:00</h1>
+    <div id="controls">
+      <button id="start">Start</button>
+      <button id="pause">Pause</button>
+      <button id="reset">Reset</button>
+    </div>
+  </div>
+  <script>
+    let CDDuration = 0;
+    let timer;
+    let remainingTime = 0; // Initialize with 0 to avoid undefined issues
+    let isRunning = false;
+
+    function startCD(duration) {
+      clearInterval(timer);
+      remainingTime = duration;
+      updateDisplay();
+      timer = setInterval(function () {
+        if (remainingTime <= 0) {
+          clearInterval(timer);
+          isRunning = false;
+          return;
+        }
+        remainingTime--;
+        updateDisplay();
+      }, 1000);
+    }
+
+    function updateDisplay() {
+      let hours = parseInt(remainingTime / 3600, 10);
+      let minutes = parseInt((remainingTime % 3600) / 60, 10);
+      let seconds = parseInt(remainingTime % 60, 10);
+
+      hours = hours < 10 ? "0" + hours : hours;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
+
+      document.getElementById("timer").textContent = hours + ":" + minutes + ":" + seconds;
+    }
+
+    document.getElementById("start").addEventListener('click', function () {
+      if (!isRunning) {
+        if (remainingTime === 0) {
+          let hours = prompt("Enter countdown duration in hours:", "3");
+          CDDuration = parseFloat(hours) * 3600; // Convert hours to seconds
+          if (!isNaN(CDDuration) && CDDuration > 0) {
+            remainingTime = CDDuration;
+          } else {
+            alert("Invalid input. Please enter a positive number.");
+            return;
+          }
+        }
+        isRunning = true;
+        startCD(remainingTime);
+      }
+    });
+
+    document.getElementById("pause").addEventListener('click', function () {
+      if (isRunning) {
+        isRunning = false;
+        clearInterval(timer);
+      }
+    });
+
+    document.getElementById("reset").addEventListener('click', function () {
+      isRunning = false;
+      clearInterval(timer);
+      remainingTime = CDDuration;
+      updateDisplay();
+    });
+
+    window.onload = function () {
+      remainingTime = CDDuration;
+      updateDisplay();
+    }
+  </script>
+</body>
+
+</html>
